@@ -22,23 +22,54 @@ void context_switch(struct thread *prev, struct thread *next);
 // insert the input thread to the end of the ready list.
 static void push_back(struct thread *t)
 {
+	t -> next == NULL;
+	t -> prev == NULL;
+
+	if ( ready_list == NULL )
+		ready_list = t;
+	else
+	{
+		struct thread* temp = ready_list;
+		while (temp -> next != NULL)
+		{
+			temp = temp -> next ;
+		}
+		t -> prev = temp;
+		temp -> next = t;
+	}
 }
 
 // remove the first thread from the ready list and return to caller.
 static struct thread *pop_front()
 {
+	if ( ready_list == NULL )
+		return NULL;
+	else
+	{
+		struct thread* t = ready_list;
+		ready_list = t -> next;
+		if( ready_list != NULL)
+		ready_list -> prev = NULL;
+		return t;
+	}
 }
 
 // the next thread to schedule is the first thread in the ready list.
 // obtain the next thread from the ready list and call context_switch.
 static void schedule()
 {
+	struct thread *prev= cur_thread;
+	struct thread *next =  pop_front(ready_list);
+	cur_thread= next;
+	context_switch(prev, next);
 }
 
 // push the cur_thread to the end of the ready list and call schedule
 // if cur_thread is null, allocate struct thread for cur_thread
 static void schedule1()
 {
+	push_back(cur_thread);
+	schedule();
 }
 
 // allocate stack and struct thread for new thread
@@ -48,19 +79,27 @@ static void schedule1()
 // push the current thread to the end of the ready list
 void create_thread(func_t func, void *param)
 {
+	struct thread *t = malloc(sizeof(struct thread));
+
 }
 
 // call schedule1
 void thread_yield()
 {
+	schedule1();
 }
 
 // call schedule
 void thread_exit()
 {
+	schedule();
 }
 
 // call schedule1 until ready_list is null
 void wait_for_all()
 {
+	while (ready_list != NULL )
+	{
+		thread_yield();
+	}
 }
