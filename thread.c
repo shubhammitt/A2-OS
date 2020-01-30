@@ -42,13 +42,12 @@ static void push_back(struct thread *t)
 // remove the first thread from the ready list and return to caller.
 static struct thread *pop_front()
 {
-		// printf("jjs\n");
 		struct thread* t = ready_list;
 		ready_list = ready_list -> next;
 		if( ready_list != NULL)
 		ready_list -> prev = NULL;
-		t->prev=NULL;
-		t->next=NULL;
+		t->prev = NULL;
+		t->next = NULL;
 		return t;
 }
 
@@ -56,9 +55,9 @@ static struct thread *pop_front()
 // obtain the next thread from the ready list and call context_switch.
 static void schedule()
 {
-	struct thread *prev= cur_thread;
+	struct thread *prev = cur_thread;
 	struct thread *next =  pop_front(ready_list);
-	cur_thread= next;
+	cur_thread = next;
 	context_switch(prev, next);
 }
 
@@ -69,8 +68,8 @@ static void schedule1()
 	if (cur_thread == NULL)
 	{
 		cur_thread = malloc(sizeof(struct thread));
-		cur_thread -> next =NULL;
-		cur_thread -> prev =NULL;
+		cur_thread -> next = NULL;
+		cur_thread -> prev = NULL;
 	}
 	push_back(cur_thread);
 	schedule();
@@ -88,10 +87,9 @@ void create_thread(func_t func, void *param)
 	struct thread *t = malloc(sizeof(struct thread));
 	t -> next = NULL;
 	t -> prev = NULL;
-	stack--;
+	stack --;
 	*stack = (unsigned)param;
-	stack--;
-	stack--;
+	stack -= 2;
 	*stack = (unsigned)func;
 	stack -= 4;
 	t -> esp = stack;
@@ -113,7 +111,7 @@ void thread_exit()
 // call schedule1 until ready_list is null
 void wait_for_all()
 {
-	while ( ready_list!=NULL )
+	while ( ready_list != NULL )
 	{
 		thread_yield();
 	}
