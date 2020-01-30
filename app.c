@@ -18,10 +18,12 @@ void foo(void *ptr)
 	for (i = thread_id; i <= num_threads; i++) {
 		sum += counter * (thread_id + 1) * (i + 1);
 		counter++;
+		fflush(NULL);
 		if (num_threads <= 16) {
 			printf("thread: %d running iteration:%d\n", tid[0], i);
 		}
 		thread_yield();
+		// printf("bye\n");
 	}
 	thread_exit();
 }
